@@ -35,24 +35,30 @@ class Dataset:
             "mask": torch.tensor(mask, dtype=torch.long),
             "gabriel_mask": torch.tensor(gabriel_mask, dtype=torch.long)
         }
-
+#"A BERT tokenizer uses something known BERT tokenizer which is BERT case sensitive"
 def main():
-    texts = ["A BERT tokenizer uses something known BERT tokenizer which is BERT case sensitive","A BERT tokenizer uses something known BERT"]
+    texts = ["A BERT tokenizer"]#,"A BERT tokenizer uses something known BERT"]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    train_dataset = Dataset(texts=texts, tokenizer=tokenizer, max_len=20)	#mettere text in lista perchè Dataset prende texts (si suppone essere una lista di strionghe)
+    train_dataset = Dataset(texts=texts, tokenizer=tokenizer, max_len=5)	#mettere text in lista perchè Dataset prende texts (si suppone essere una lista di strionghe)
     print('\n\n')
     # Stampa degli elementi del dataset
-    print(train_dataset[0]) #ids
-    print(train_dataset[1]) #padding/mask
-    print(train_dataset[2]) #gabriel_mask
-    train_data_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=2)
-    
-    for bi, d in tqdm(enumerate(train_data_loader), total=len(train_data_loader), desc='Loading:', disable=True):
-        ids = d["ids"].to(device, dtype=torch.long,non_blocking=True)
-        mask = d["mask"].to(device, dtype=torch.long,non_blocking=True)
-        gabriel_mask = d['gabriel_mask'].to(device, dtype=torch.long,non_blocking=True)
-        outputs = model(input_ids=ids, attention_mask=mask, gabriel_mask=gabriel_mask) # aggiungere modifiche
-        print(outputs)
+    print(train_dataset[0]) #ids,padding/mask,gabriel_mask
+    print('------')
 
+    train_data_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=2)
+    print('\n\n')
+    print(len(train_data_loader))
+    print('------')
+    
+
+    for bi, d in tqdm(enumerate(train_data_loader), total=len(train_data_loader), desc='Loading:', disable=True):
+        ids = d["ids"].to(device, dtype=torch.long)#,non_blocking=True)
+        mask = d["mask"].to(device, dtype=torch.long)#,non_blocking=True)
+        gabriel_mask = d['gabriel_mask'].to(device, dtype=torch.long)#,non_blocking=True)
+        #outputs = model(input_ids=ids, attention_mask=mask, gabriel_mask=gabriel_mask) # aggiungere modifiche
+        #print(outputs)
+        print(ids)
+        print(mask)
+        print(gabriel_mask)
 if __name__ == '__main__':
     main()

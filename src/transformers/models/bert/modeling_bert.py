@@ -242,7 +242,7 @@ class BertEmbeddings(nn.Module):
 
 
 class BertSelfAttention(nn.Module):
-    def __init__(self, config, gabriel_mask = None, position_embedding_type=None):
+    def __init__(self, config, position_embedding_type=None):#gabriel_mask = None
         super().__init__()
         if config.hidden_size % config.num_attention_heads != 0 and not hasattr(config, "embedding_size"):
             raise ValueError(
@@ -267,7 +267,7 @@ class BertSelfAttention(nn.Module):
             self.distance_embedding = nn.Embedding(2 * config.max_position_embeddings - 1, self.attention_head_size)
 
         self.is_decoder = config.is_decoder
-        self.gabriel_mask = gabriel_mask
+        #self.gabriel_mask = gabriel_mask
 
     def transpose_for_scores(self, x: torch.Tensor) -> torch.Tensor:
         new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
@@ -352,7 +352,8 @@ class BertSelfAttention(nn.Module):
 
         # modifica gabriel_mask
         if gabriel_mask is not None:
-            torch.addcmul(0,gabriel_mask,attention_scores,1)
+            #torch.addcmul(0,gabriel_mask,attention_scores,1)
+            attention_scores *= gabriel_mask
 
 
         if attention_mask is not None:
@@ -883,7 +884,7 @@ class BertModel(BertPreTrainedModel):
     `add_cross_attention` set to `True`; an `encoder_hidden_states` is then expected as an input to the forward pass.
     """
 
-    def __init__(self, config, add_pooling_layer=True):
+    def __init__(self, config, add_pooling_layer=True, gabriel_mask = None):
         super().__init__(config)
         self.config = config
 
@@ -893,6 +894,7 @@ class BertModel(BertPreTrainedModel):
         self.pooler = BertPooler(config) if add_pooling_layer else None
 
         # Initialize weights and apply final processing
+        self.gabriel_mask = gabriel_mask
         self.post_init()
 
     def get_input_embeddings(self):
@@ -930,6 +932,7 @@ class BertModel(BertPreTrainedModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
+        gabriel_mask: Optional[torch.FloatTensor] = None,
     ) -> Union[Tuple[torch.Tensor], BaseModelOutputWithPoolingAndCrossAttentions]:
         r"""
         encoder_hidden_states  (`torch.FloatTensor` of shape `(batch_size, sequence_length, hidden_size)`, *optional*):
@@ -977,6 +980,7 @@ class BertModel(BertPreTrainedModel):
 
         # past_key_values_length
         past_key_values_length = past_key_values[0][0].shape[2] if past_key_values is not None else 0
+        
 
         if attention_mask is None:
             attention_mask = torch.ones(((batch_size, seq_length + past_key_values_length)), device=device)
@@ -1043,6 +1047,7 @@ class BertModel(BertPreTrainedModel):
             hidden_states=encoder_outputs.hidden_states,
             attentions=encoder_outputs.attentions,
             cross_attentions=encoder_outputs.cross_attentions,
+            #gabriel_mask=gabriel_mask,  # Return the gabriel_mask in the output Non necessario
         )
 
 
