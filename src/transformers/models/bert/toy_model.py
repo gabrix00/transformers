@@ -37,7 +37,7 @@ class Dataset:
         }
 
 def main():
-    texts = ["A BERT tokenizer uses something known BERT tokenizer which is BERT case sensitive"]
+    texts = ["A BERT tokenizer uses something known BERT tokenizer which is BERT case sensitive","A BERT tokenizer uses something known BERT"]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     train_dataset = Dataset(texts=texts, tokenizer=tokenizer, max_len=20)	#mettere text in lista perchè Dataset prende texts (si suppone essere una lista di strionghe)
     print('\n\n')
