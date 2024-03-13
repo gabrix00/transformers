@@ -10,8 +10,9 @@ print('dir is' +str(os.getcwd()))
 from transformers import AutoTokenizer
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
-from MaskingMatrix.scripts.masking_process import masking
+from masking_process import masking
 from transformers.models.bert.modeling_bert import BertModel
+
 
 model = BertModel.from_pretrained('bert-base-uncased')
 
