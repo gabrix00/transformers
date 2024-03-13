@@ -10,7 +10,7 @@ from Parser2Masking import from_parser2masking
 
 #print(create_dependency_pairs(text))
 def masking(text):
-    return from_parser2masking(text,dpairs(text),True)
+    return from_parser2masking(text,dpairs(text),False)
     
 
 #print(masking(text))
