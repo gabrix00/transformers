@@ -4,7 +4,7 @@ from torch import device
 from tqdm import tqdm 
 from transformers import AutoTokenizer
 from masking_process import masking
-from transformers.models.bert.modeling_bert import BertModel
+#from transformers.models.bert.modeling_bert import BertModel
 
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 model = BertModel.from_pretrained('bert-base-uncased')
@@ -39,7 +39,7 @@ class Dataset:
 def main():
     texts = ["A BERT tokenizer"]#,"A BERT tokenizer uses something known BERT"]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    train_dataset = Dataset(texts=texts, tokenizer=tokenizer, max_len=5)	#mettere text in lista perchè Dataset prende texts (si suppone essere una lista di strionghe)
+    train_dataset = Dataset(texts=texts, tokenizer=tokenizer, max_len=6)	#Dataset prende texts (si suppone essere una lista di stringhe)
     print('\n\n')
     # Stampa degli elementi del dataset
     print(train_dataset[0]) #ids,padding/mask,gabriel_mask
@@ -49,16 +49,19 @@ def main():
     print('\n\n')
     print(len(train_data_loader))
     print('------')
+
+    
     
 
     for bi, d in tqdm(enumerate(train_data_loader), total=len(train_data_loader), desc='Loading:', disable=True):
         ids = d["ids"].to(device, dtype=torch.long)#,non_blocking=True)
         mask = d["mask"].to(device, dtype=torch.long)#,non_blocking=True)
         gabriel_mask = d['gabriel_mask'].to(device, dtype=torch.long)#,non_blocking=True)
-        #outputs = model(input_ids=ids, attention_mask=mask, gabriel_mask=gabriel_mask) # aggiungere modifiche
-        #print(outputs)
-        print(ids)
-        print(mask)
-        print(gabriel_mask)
+        outputs = model(input_ids=ids, attention_mask=mask)#, gabriel_mask=gabriel_mask) # aggiungere modifiche
+        print(outputs)
+        #print(ids)
+        #print(mask)
+        #print(gabriel_mask)
+
 if __name__ == '__main__':
     main()

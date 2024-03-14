@@ -267,6 +267,7 @@ class BertSelfAttention(nn.Module):
             self.distance_embedding = nn.Embedding(2 * config.max_position_embeddings - 1, self.attention_head_size)
 
         self.is_decoder = config.is_decoder
+        self.gabriel_mask = config.gabriel_mask
         #self.gabriel_mask = gabriel_mask
 
     def transpose_for_scores(self, x: torch.Tensor) -> torch.Tensor:
@@ -884,7 +885,7 @@ class BertModel(BertPreTrainedModel):
     `add_cross_attention` set to `True`; an `encoder_hidden_states` is then expected as an input to the forward pass.
     """
 
-    def __init__(self, config, add_pooling_layer=True, gabriel_mask = None):
+    def __init__(self, config, add_pooling_layer=True):#, gabriel_mask = None):
         super().__init__(config)
         self.config = config
 
@@ -894,7 +895,7 @@ class BertModel(BertPreTrainedModel):
         self.pooler = BertPooler(config) if add_pooling_layer else None
 
         # Initialize weights and apply final processing
-        self.gabriel_mask = gabriel_mask
+        #self.gabriel_mask = gabriel_mask
         self.post_init()
 
     def get_input_embeddings(self):
@@ -932,7 +933,7 @@ class BertModel(BertPreTrainedModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
-        gabriel_mask: Optional[torch.FloatTensor] = None,
+        #gabriel_mask: Optional[torch.FloatTensor] = None,
     ) -> Union[Tuple[torch.Tensor], BaseModelOutputWithPoolingAndCrossAttentions]:
         r"""
         encoder_hidden_states  (`torch.FloatTensor` of shape `(batch_size, sequence_length, hidden_size)`, *optional*):
@@ -954,6 +955,12 @@ class BertModel(BertPreTrainedModel):
             If set to `True`, `past_key_values` key value states are returned and can be used to speed up decoding (see
             `past_key_values`).
         """
+        #print(self.config)#debug
+        #print(gabriel_mask)
+        print('\n\n\n\n')
+        print('SIAMO QUIIIII')
+        print('\n\n\n\n')
+
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
             output_hidden_states if output_hidden_states is not None else self.config.output_hidden_states
@@ -1040,7 +1047,7 @@ class BertModel(BertPreTrainedModel):
         if not return_dict:
             return (sequence_output, pooled_output) + encoder_outputs[1:]
 
-        return BaseModelOutputWithPoolingAndCrossAttentions(
+        return [BaseModelOutputWithPoolingAndCrossAttentions(
             last_hidden_state=sequence_output,
             pooler_output=pooled_output,
             past_key_values=encoder_outputs.past_key_values,
@@ -1048,7 +1055,7 @@ class BertModel(BertPreTrainedModel):
             attentions=encoder_outputs.attentions,
             cross_attentions=encoder_outputs.cross_attentions,
             #gabriel_mask=gabriel_mask,  # Return the gabriel_mask in the output Non necessario
-        )
+        ),'SIAMO QUIIIII']
 
 
 @add_start_docstrings(
