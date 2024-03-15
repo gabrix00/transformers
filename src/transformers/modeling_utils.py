@@ -1215,6 +1215,10 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMix
         )
         self.config = config
 
+        print('+++++++') #debug
+        print(config) #debug
+        print('+++++++') #debug
+
         self.name_or_path = config.name_or_path
         self.warnings_issued = {}
         self.generation_config = GenerationConfig.from_model_config(config) if self.can_generate() else None

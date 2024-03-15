@@ -352,9 +352,10 @@ class BertSelfAttention(nn.Module):
         attention_scores = attention_scores / math.sqrt(self.attention_head_size)
 
         # modifica gabriel_mask
-        if gabriel_mask is not None:
+        #if gabriel_mask is not None:
+        
             #torch.addcmul(0,gabriel_mask,attention_scores,1)
-            attention_scores *= gabriel_mask
+        attention_scores *= gabriel_mask
 
 
         if attention_mask is not None:
@@ -872,7 +873,7 @@ BERT_INPUTS_DOCSTRING = r"""
     "The bare Bert Model transformer outputting raw hidden-states without any specific head on top.",
     BERT_START_DOCSTRING,
 )
-class BertModel(BertPreTrainedModel):
+class BertModel_(BertPreTrainedModel):
     """
 
     The model can behave as an encoder (with only self-attention) as well as a decoder, in which case a layer of
@@ -899,7 +900,8 @@ class BertModel(BertPreTrainedModel):
         self.post_init()
 
     def get_input_embeddings(self):
-        return self.embeddings.word_embeddings
+        #return self.embeddings.word_embeddings
+        return 'siamo qui'
 
     def set_input_embeddings(self, value):
         self.embeddings.word_embeddings = value
@@ -1045,8 +1047,9 @@ class BertModel(BertPreTrainedModel):
         pooled_output = self.pooler(sequence_output) if self.pooler is not None else None
 
         if not return_dict:
-            return (sequence_output, pooled_output) + encoder_outputs[1:]
-
+            return 'siamo qui'
+        #    return (sequence_output, pooled_output) + encoder_outputs[1:]
+        """
         return [BaseModelOutputWithPoolingAndCrossAttentions(
             last_hidden_state=sequence_output,
             pooler_output=pooled_output,
@@ -1056,7 +1059,8 @@ class BertModel(BertPreTrainedModel):
             cross_attentions=encoder_outputs.cross_attentions,
             #gabriel_mask=gabriel_mask,  # Return the gabriel_mask in the output Non necessario
         ),'SIAMO QUIIIII']
-
+        """
+        return 'SIAMO QUIIIII'
 
 @add_start_docstrings(
     """
