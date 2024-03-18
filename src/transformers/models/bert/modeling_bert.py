@@ -873,7 +873,7 @@ BERT_INPUTS_DOCSTRING = r"""
     "The bare Bert Model transformer outputting raw hidden-states without any specific head on top.",
     BERT_START_DOCSTRING,
 )
-class BertModel_(BertPreTrainedModel):
+class BertModel(BertPreTrainedModel):
     """
 
     The model can behave as an encoder (with only self-attention) as well as a decoder, in which case a layer of
